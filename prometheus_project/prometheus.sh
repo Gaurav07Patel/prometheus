@@ -30,7 +30,7 @@ install_prometheus() {
 
 
     echo "sudo nano /etc/prometheus/prometheus.yml ***"
-    sudo bash -c ‘cat << EOF > /etc/prometheus/prometheus.yml
+    sudo bash -c 'cat << EOF > /etc/prometheus/prometheus.yml
     global:
     scrape_interval: 15s
     scrape_configs:
@@ -38,7 +38,7 @@ install_prometheus() {
         scrape_interval: 5s
         static_configs:
         - targets: ['localhost:9090']
-EOF
+EOF'
     sudo chown prometheus:prometheus /etc/prometheus/prometheus.yml
 
     #running following command to verify if the tha yaml file is working fine?
@@ -50,7 +50,7 @@ EOF
 
     # The service file tells systemd to run Prometheus as the prometheus user, with the configuration file located in the /etc/prometheus/prometheus.yml directory and to store its data in the /var/lib/prometheus directory.
     echo "*** sudo nano /etc/systemd/system/prometheus.service... ***"
-    sudo bash -c ‘cat << EOF > /etc/systemd/system/prometheus.service
+    sudo bash -c 'cat << EOF > /etc/systemd/system/prometheus.service
     [Unit]
     Description=Prometheus
     Wants=network-online.target
@@ -68,7 +68,7 @@ EOF
 
     [Install]
     WantedBy=multi-user.target
-EOF
+EOF'
 
     echo "*** starting prometheus server... ***"
     sudo systemctl daemon-reload
@@ -87,7 +87,7 @@ install_nodeexporter() {
     rm -rf node_exporter-1.0.1.linux-amd64.tar.gz node_exporter-1.0.1.linux-amd64
 
     echo "creating the Systemd service file for Node Exporter"
-    sudo bash -c ‘cat << EOF > /etc/systemd/system/node_exporter.service
+    sudo bash -c 'cat << EOF > /etc/systemd/system/node_exporter.service
     [Unit]
     Description=Node Exporter
     Wants=network-online.target
@@ -99,14 +99,14 @@ install_nodeexporter() {
     ExecStart=/usr/local/bin/node_exporter
     [Install]
     WantedBy=multi-user.target
-EOF
+EOF'
     echo "*** starting node expoerter server... ***"
     sudo systemctl daemon-reload
     sudo systemctl start node_exporter
     sudo systemctl enable node_exporter
 
     echo "*** sudo nano /etc/prometheus/prometheus.yml... ***"
-    sudo bash -c ’cat << EOF >/etc/prometheus/prometheus.yml
+    sudo bash -c 'cat << EOF >/etc/prometheus/prometheus.yml
     global:
       scrape_interval: 15s
     scrape_configs:
@@ -118,7 +118,7 @@ EOF
         scrape_interval: 5s
         static_configs:
           - targets: [‘localhost:9100’]
-EOF
+EOF'
     echo "*** restarting prometheus server... ***"
     sudo systemctl restart prometheus
 }
