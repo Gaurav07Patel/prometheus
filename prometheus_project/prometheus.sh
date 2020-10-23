@@ -134,10 +134,13 @@ install_grafana() {
     sudo /bin/systemctl start grafana-server
 }
 
+echo " installation started..."
 
-install_prometheus()
-install_nodeexporter()
-install_grafana()
+install_prometheus
+install_nodeexporter
+install_grafana
+
+echo "installation finished.. "
 
 
 
