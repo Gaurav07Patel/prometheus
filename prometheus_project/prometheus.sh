@@ -135,9 +135,9 @@ install_grafana() {
 }
 
 
-
-
-
+install_prometheus()
+install_nodeexporter()
+install_grafana()
 
 
 
