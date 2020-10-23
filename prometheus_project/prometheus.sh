@@ -3,6 +3,7 @@ sudo apt-get update -y
 sudo apt-get install nginx -y
 
 #adding user and changing ownership
+echo "*** Adduser and changing ownership... *** "
 sudo useradd --no-create-home --shell /bin/false prometheus
 sudo useradd --no-create-home --shell /bin/false node_exporter
 sudo mkdir /etc/prometheus
@@ -11,6 +12,7 @@ sudo chown prometheus:prometheus /etc/prometheus
 sudo chown prometheus:prometheus /var/lib/prometheus
 
 install_prometheus() {
+    echo "*** installing Prometheus.. **"
     #unarchaving prometheus 
     curl -LO https://github.com/prometheus/prometheus/releases/download/v2.22.0/prometheus-2.22.0.linux-amd64.tar.gz
     tar xvf prometheus-2.22.0.linux-amd64.tar.gz
@@ -27,7 +29,7 @@ install_prometheus() {
     rm -rf prometheus-2.22.0.linux-amd64.tar.gz prometheus-2.22.0.linux-amd64
 
 
-    #sudo nano /etc/prometheus/prometheus.yml
+    echo "sudo nano /etc/prometheus/prometheus.yml ***"
     sudo bash -c ‘cat << EOF > /etc/prometheus/prometheus.yml
     global:
     scrape_interval: 15s
@@ -47,7 +49,7 @@ EOF
     #     --web.console.libraries=/etc/prometheus/console_libraries
 
     # The service file tells systemd to run Prometheus as the prometheus user, with the configuration file located in the /etc/prometheus/prometheus.yml directory and to store its data in the /var/lib/prometheus directory.
-    # sudo nano /etc/systemd/system/prometheus.service
+    echo "*** sudo nano /etc/systemd/system/prometheus.service... ***"
     sudo bash -c ‘cat << EOF > /etc/systemd/system/prometheus.service
     [Unit]
     Description=Prometheus
@@ -68,13 +70,14 @@ EOF
     WantedBy=multi-user.target
 EOF
 
-    #starting prometheus server
+    echo "*** starting prometheus server... ***"
     sudo systemctl daemon-reload
     sudo systemctl start prometheus
     sudo systemctl enable prometheus
     } 
 
 install_nodeexporter() {
+    echo "*** Installing node_expoerter... ***"
     cd ~
     curl -LO https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz # latest
     sha256sum node_exporter-1.0.1.linux-amd64.tar.gz
@@ -82,7 +85,8 @@ install_nodeexporter() {
     sudo cp node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bin
     sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
     rm -rf node_exporter-1.0.1.linux-amd64.tar.gz node_exporter-1.0.1.linux-amd64
-    # creating the Systemd service file for Node Exporter
+
+    echo "creating the Systemd service file for Node Exporter"
     sudo bash -c ‘cat << EOF > /etc/systemd/system/node_exporter.service
     [Unit]
     Description=Node Exporter
@@ -96,11 +100,12 @@ install_nodeexporter() {
     [Install]
     WantedBy=multi-user.target
 EOF
-    # reload systemd to use the newly created service
+    echo "*** starting node expoerter server... ***"
     sudo systemctl daemon-reload
     sudo systemctl start node_exporter
     sudo systemctl enable node_exporter
 
+    echo "*** sudo nano /etc/prometheus/prometheus.yml... ***"
     sudo bash -c ’cat << EOF >/etc/prometheus/prometheus.yml
     global:
       scrape_interval: 15s
@@ -114,10 +119,12 @@ EOF
         static_configs:
           - targets: [‘localhost:9100’]
 EOF
+    echo "*** restarting prometheus server... ***"
     sudo systemctl restart prometheus
 }
 
 install_grafana() {
+    echo "*** installing grafana... ***"
     sudo apt-get install -y adduser libfontconfig1
     wget https://dl.grafana.com/oss/release/grafana_7.2.2_amd64.deb
     sudo dpkg -i grafana_7.2.2_amd64.deb
