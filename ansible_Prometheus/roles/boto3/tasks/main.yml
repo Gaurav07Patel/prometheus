@@ -1,0 +1,8 @@
+---
+- name: Installing boto/boto3...
+  apt:
+  - name :
+       boto
+       boto3
+    state : present   
+    update_cache: yes

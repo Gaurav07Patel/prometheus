@@ -1,0 +1,18 @@
+---
+- name: Installing software-properties-common...
+  apt:
+   name : software-properties-common
+   state : present   
+   update_cache: yes
+
+- name: Installing repo ppa:ansible/ansible...
+  apt_repository:
+    repo : ppa:ansible/ansible
+    update_cache : yes 
+    state : present 
+
+- name: Installing ansible...
+  apt:
+   name : ansible
+   state : present   
+   update_cache: yes
